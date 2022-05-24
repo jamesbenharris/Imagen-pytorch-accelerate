@@ -251,9 +251,9 @@ class GaussianDiffusion:
         p = 80
         s = np.percentile(
             np.abs(model_output2), p,
-            axis=tuple(range(1, model_output2.ndim)))
+            axis=tuple(range(1, model_output2.ndim)))[0]
         
-        s = np.max(s, 1.0)[0]
+        s = max(s, 1.0)
     
         model_output = th.clip(model_output, -s, s) / s
 
