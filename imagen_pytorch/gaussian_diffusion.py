@@ -247,7 +247,7 @@ class GaussianDiffusion:
         B, C = x.shape[:2]
         assert t.shape == (B,)
         model_output = model(x, self._scale_timesteps(t), **model_kwargs)
-        model_output2 = deepcopy(model_output).cpu().detach().numpy()
+        model_output2 = th.clone(model_output).cpu().detach().numpy()
         p = 80
         s = np.percentile(
             np.abs(model_output2), p,
