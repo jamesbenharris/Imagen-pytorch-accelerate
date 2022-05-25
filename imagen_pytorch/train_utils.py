@@ -77,6 +77,7 @@ class TrainLoop:
         self.lg_loss_scale = INITIAL_LOG_LOSS_SCALE
         self.sync_cuda = th.cuda.is_available()
         self.accelerator = Accelerator()
+        print('type of training', self.accelerator.distributed_type)
         self._load_and_sync_parameters()
         if self.use_fp16:
             self._setup_fp16()
