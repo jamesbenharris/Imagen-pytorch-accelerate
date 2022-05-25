@@ -67,27 +67,28 @@ def create_webdataset(
 
     filtered_dataset = dataset.select(filter_dataset)
     print('dataset filtered')
+    resolution = 64
     def preprocess_dataset(item):
         if enable_image:
             image_data = item[image_key]
             
             pil_image = Image.open(io.BytesIO(image_data))
             pil_image.load()
-            while min(*pil_image.size) >= 2 * self.resolution:
+            while min(*pil_image.size) >= 2 * resolution:
                 pil_image = pil_image.resize(
                     tuple(x // 2 for x in pil_image.size), resample=Image.BOX
                 )
 
-            scale = self.resolution / min(*pil_image.size)
+            scale = resolution / min(*pil_image.size)
             pil_image = pil_image.resize(
                 tuple(round(x * scale) for x in pil_image.size), resample=Image.BICUBIC
             )
 
             arr = np.array(pil_image.convert("RGB"))
-            crop_y = (arr.shape[0] - self.resolution) // 2
-            crop_x = (arr.shape[1] - self.resolution) // 2
+            crop_y = (arr.shape[0] - resolution) // 2
+            crop_x = (arr.shape[1] - resolution) // 2
             
-            arr = arr[crop_y: crop_y + self.resolution, crop_x: crop_x + self.resolution]
+            arr = arr[crop_y: crop_y + resolution, crop_x: crop_x + resolution]
             arr = arr.astype(np.float32) / 127.5 - 1
 
         if enable_text:
