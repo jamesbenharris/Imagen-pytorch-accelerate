@@ -3,6 +3,7 @@ from torch.utils.data import DataLoader
 import os
 import argparse
 import io
+import numpy as np
 from PIL import Image
 from transformers import AutoTokenizer
 
@@ -76,7 +77,7 @@ def create_webdataset(
             pil_image.load()
             while min(*pil_image.size) >= 2 * resolution:
                 pil_image = pil_image.resize(
-                    tuple(x // 2 for x in pil_image.size), resample=Image.BOX
+                    tuple(x // 2 for x in pil_image.size), resample=Image.Resampling.BOX
                 )
 
             scale = resolution / min(*pil_image.size)
