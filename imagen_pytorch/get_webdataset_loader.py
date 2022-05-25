@@ -35,7 +35,7 @@ def create_webdataset(
     caption_key="txt",
     enable_metadata=False,
     cache_path=None,
-    resolution,
+    resolution=64,
 ):
     """Create a WebDataset reader, it can read a webdataset of image, text and json"""
     import webdataset as wds  # pylint: disable=import-outside-toplevel
