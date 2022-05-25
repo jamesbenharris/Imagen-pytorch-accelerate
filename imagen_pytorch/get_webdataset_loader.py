@@ -68,26 +68,33 @@ def create_webdataset(
     filtered_dataset = dataset.select(filter_dataset)
     print('dataset filtered')
     def preprocess_dataset(item):
-        output = {}
         if enable_image:
             image_data = item[image_key]
-            image = Image.open(io.BytesIO(image_data))
-            image_tensor = image_transform(image)
-            output["image_filename"] = item["__key__"]
-            output["image_tensor"] = image_tensor
+            
+            pil_image = Image.open(io.BytesIO(image_data))
+            pil_image.load()
+            while min(*pil_image.size) >= 2 * self.resolution:
+                pil_image = pil_image.resize(
+                    tuple(x // 2 for x in pil_image.size), resample=Image.BOX
+                )
+
+            scale = self.resolution / min(*pil_image.size)
+            pil_image = pil_image.resize(
+                tuple(round(x * scale) for x in pil_image.size), resample=Image.BICUBIC
+            )
+
+            arr = np.array(pil_image.convert("RGB"))
+            crop_y = (arr.shape[0] - self.resolution) // 2
+            crop_x = (arr.shape[1] - self.resolution) // 2
+            
+            arr = arr[crop_y: crop_y + self.resolution, crop_x: crop_x + self.resolution]
+            arr = arr.astype(np.float32) / 127.5 - 1
 
         if enable_text:
             text = item[caption_key]
             caption = text.decode("utf-8")
             tokenized_text = tokenizer(caption)
-            output["text_tokens"] = tokenized_text
-            output["text"] = caption
-
-        if enable_metadata:
-            metadata_file = item["json"]
-            metadata = metadata_file.decode("utf-8")
-            output["metadata"] = metadata
-        return output
+        return arr, tokenized_text
 
     transformed_dataset = filtered_dataset.map(preprocess_dataset, handler=wds.handlers.warn_and_continue)
     print('dataset transformed')
@@ -166,8 +173,6 @@ def main():
         enable_metadata=True,
     )
     dataloader = reader.get_loader()
-    print(len(dataloader))
-    print('dataloader returned')
     for i in dataloader:
         print(i)
         break
