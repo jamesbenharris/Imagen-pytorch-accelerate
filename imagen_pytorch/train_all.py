@@ -58,7 +58,7 @@ def main():
         schedule_sampler=schedule_sampler,
         weight_decay=0.01,
         lr_anneal_steps=0,
-        save_dir='/content/',
+        save_dir='/home/cene655/checkpoints',
   ).run_loop()
 if __name__ == '__main__':
     main()
