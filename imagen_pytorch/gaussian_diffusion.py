@@ -284,7 +284,14 @@ class GaussianDiffusion:
             if denoised_fn is not None:
                 x = denoised_fn(x)
             if clip_denoised:
-                return x.clamp(-1, 1)
+                x2 = th.clone(x2).cpu().detach().numpy()
+                p = 80
+                s = np.percentile(
+                    np.abs(x2), p,
+                    axis=tuple(range(1, x2.ndim)))[0]
+                s = max(s, 1.0)
+                x = th.clip(x, -s, s) / s
+                return x#x.clamp(-1, 1)
             return x
 
         if self.model_mean_type == ModelMeanType.PREVIOUS_X:
