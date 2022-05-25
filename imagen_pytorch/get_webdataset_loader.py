@@ -69,6 +69,7 @@ def create_webdataset(
 
     filtered_dataset = dataset.select(filter_dataset)
     print('dataset filtered')
+    print('resolution is', resolution)
     def preprocess_dataset(item):
         if enable_image:
             image_data = item[image_key]
