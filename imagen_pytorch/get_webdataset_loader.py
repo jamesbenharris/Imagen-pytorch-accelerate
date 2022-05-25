@@ -2,6 +2,7 @@ from torchvision.transforms import Compose, Resize, CenterCrop, ToTensor, Normal
 from torch.utils.data import DataLoader
 import os
 import argparse
+import io
 from PIL import Image
 from transformers import AutoTokenizer
 
