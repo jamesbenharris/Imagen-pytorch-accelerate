@@ -35,7 +35,6 @@ def main():
         enable_text=True,
         enable_image=True,
         enable_metadata=True,
-        resolution=64,
     )
   data = reader.get_loader()
   logger.configure()
