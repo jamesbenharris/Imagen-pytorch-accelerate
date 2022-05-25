@@ -26,7 +26,7 @@ def main():
   options['use_fp16'] = False
   options['t5_name'] = 't5-3b'
   model, diffusion = create_model_and_diffusion(**options)
-  model.load_state_dict(load_checkpoint('base', 'cpu'))
+  model.load_state_dict(load_checkpoint('base', 'cpu'), strict=False)
   reader = WebdatasetReader(
         None,
         args.input_folder,
