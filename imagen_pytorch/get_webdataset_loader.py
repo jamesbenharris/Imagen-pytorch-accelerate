@@ -150,7 +150,7 @@ def main():
     parser.add_argument('--input_folder', type=str, default='', help='Input folder')
     args = parser.parse_args()
     #input_dataset = [os.path.join(args.input_folder, i) for i in os.listdir(args.input_folder)]
-    batch_size = 2
+    batch_size = 4
     num_prepro_workers = 2
     preprocess = _transform(64)
 
@@ -166,6 +166,7 @@ def main():
         enable_metadata=True,
     )
     dataloader = reader.get_loader()
+    print(len(dataloader))
     print('dataloader returned')
     for i in dataloader:
         print(i)
