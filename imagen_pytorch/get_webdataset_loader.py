@@ -38,7 +38,8 @@ def create_webdataset(
     import webdataset as wds  # pylint: disable=import-outside-toplevel
 
 
-    dataset = wds.WebDataset(urls, cache_dir=cache_path, cache_size=10 ** 10, handler=wds.handlers.warn_and_continue)
+    dataset = wds.WebDataset(urls)
+    print('dataset_created')
     tokenizer_t = AutoTokenizer.from_pretrained('t5-large')
     def tokenizer(text):
         out_dict = {}
@@ -64,7 +65,7 @@ def create_webdataset(
         return True
 
     filtered_dataset = dataset.select(filter_dataset)
-
+    print('dataset filtered')
     def preprocess_dataset(item):
         output = {}
         if enable_image:
@@ -88,6 +89,7 @@ def create_webdataset(
         return output
 
     transformed_dataset = filtered_dataset.map(preprocess_dataset, handler=wds.handlers.warn_and_continue)
+    print('dataset transformed')
     return transformed_dataset
 
 
@@ -104,8 +106,6 @@ def dataset_to_dataloader(dataset, batch_size, num_prepro_workers, input_format)
         shuffle=False,
         num_workers=num_prepro_workers,
         pin_memory=True,
-        prefetch_factor=2,
-        collate_fn=collate_fn if input_format == "files" else None,
     )
     return data
 
@@ -165,8 +165,9 @@ def main():
         enable_metadata=True,
     )
     dataloader = reader.get_loader()
+    print('dataloader returned')
     for i in dataloader:
-        print(i)
+        print(type(i))
         break
 if __name__ == '__main__':
     main()
