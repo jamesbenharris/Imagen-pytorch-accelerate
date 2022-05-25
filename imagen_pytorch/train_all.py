@@ -1,6 +1,5 @@
 from PIL import Image
 import torch as th
-import pandas as pd
 from imagen_pytorch.download import load_checkpoint
 from imagen_pytorch.model_creation import (
     create_model_and_diffusion,
