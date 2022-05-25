@@ -3,6 +3,8 @@ from torch.utils.data import DataLoader
 import os
 import argparse
 from PIL import Image
+from transformers import AutoTokenizer
+
 try:
     from torchvision.transforms import InterpolationMode
     BICUBIC = InterpolationMode.BICUBIC
@@ -37,8 +39,21 @@ def create_webdataset(
 
 
     dataset = wds.WebDataset(urls, cache_dir=cache_path, cache_size=10 ** 10, handler=wds.handlers.warn_and_continue)
-    tokenizer = lambda text: clip.tokenize([text], truncate=True)[0]
+    tokenizer_t = AutoTokenizer.from_pretrained('t5-large')
+    def tokenizer(text):
+        out_dict = {}
+        text_encoding = tokenizer_t(
+            text,
+            max_length=128,
+            padding="max_length",
+            truncation=True,
+            return_attention_mask=True,
+            add_special_tokens=True,
+            return_tensors="pt")
 
+        out_dict["tokens"] = text_encoding['input_ids'][0]
+        out_dict["mask"] = text_encoding['attention_mask'][0]
+        return out_dict
     def filter_dataset(item):
         if enable_text and caption_key not in item:
             return False
