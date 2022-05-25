@@ -135,8 +135,9 @@ class WebdatasetReader:
         enable_metadata=False,
         wds_image_key="jpg",
         wds_caption_key="txt",
-        cache_path=None,
         resolution=64,
+        cache_path=None,
+        
     ):
         self.batch_size = batch_size
         dataset = create_webdataset(
