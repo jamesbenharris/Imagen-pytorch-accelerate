@@ -43,7 +43,7 @@ def create_webdataset(
 
     dataset = wds.WebDataset(urls)
     print('dataset_created')
-    tokenizer_t = AutoTokenizer.from_pretrained('t5-large')
+    tokenizer_t = AutoTokenizer.from_pretrained('t5-3b')
     def tokenizer(text):
         out_dict = {}
         text_encoding = tokenizer_t(
