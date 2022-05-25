@@ -284,7 +284,7 @@ class GaussianDiffusion:
             if denoised_fn is not None:
                 x = denoised_fn(x)
             if clip_denoised:
-                x2 = th.clone(x2).cpu().detach().numpy()
+                x2 = th.clone(x).cpu().detach().numpy()
                 p = 80
                 s = np.percentile(
                     np.abs(x2), p,
