@@ -91,12 +91,12 @@ def create_webdataset(
             
             arr = arr[crop_y: crop_y + resolution, crop_x: crop_x + resolution]
             arr = arr.astype(np.float32) / 127.5 - 1
-
+            
         if enable_text:
             text = item[caption_key]
             caption = text.decode("utf-8")
             tokenized_text = tokenizer(caption)
-        return arr, tokenized_text
+        return np.transpose(arr, [2, 0, 1]), tokenized_text
 
     transformed_dataset = filtered_dataset.map(preprocess_dataset, handler=wds.handlers.warn_and_continue)
     print('dataset transformed')
