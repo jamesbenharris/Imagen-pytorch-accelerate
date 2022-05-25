@@ -31,7 +31,7 @@ def main():
         None,
         args.input_folder,
         args.batch_size,
-        num_prepro_workers,
+        2,
         enable_text=True,
         enable_image=True,
         enable_metadata=True,
