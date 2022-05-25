@@ -1,5 +1,4 @@
 from PIL import Image
-from IPython.display import display
 import torch as th
 import pandas as pd
 from imagen_pytorch.download import load_checkpoint
