@@ -148,7 +148,7 @@ def main():
     parser = argparse.ArgumentParser()
     parser.add_argument('--input_folder', type=str, default='', help='Input folder')
     args = parser.parse_args()
-    input_dataset = [os.path.join(args.input_folder, i) for i in os.listdir(args.input_folder)]
+    #input_dataset = [os.path.join(args.input_folder, i) for i in os.listdir(args.input_folder)]
     batch_size = 2
     num_prepro_workers = 2
     preprocess = _transform(64)
@@ -157,7 +157,7 @@ def main():
     actual_values = []
     reader = WebdatasetReader(
         preprocess,
-        input_dataset,
+        input_folder,
         batch_size,
         num_prepro_workers,
         enable_text=True,
