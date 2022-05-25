@@ -60,3 +60,5 @@ def main():
         lr_anneal_steps=0,
         save_dir='/content/',
   ).run_loop()
+if __name__ == '__main__':
+    main()
