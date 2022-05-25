@@ -157,30 +157,3 @@ class WebdatasetReader:
         for batch in self.dataloader:
             yield batch
 
-def main():
-    parser = argparse.ArgumentParser()
-    parser.add_argument('--input_folder', type=str, default='', help='Input folder')
-    parser.add_argument('--batch_size', type=int, default=4, help='batch_size')
-    args = parser.parse_args()
-    #input_dataset = [os.path.join(args.input_folder, i) for i in os.listdir(args.input_folder)]
-    batch_size = 4
-    num_prepro_workers = 2
-    preprocess = _transform(64)
-         
-    output_partition_count = 2
-    actual_values = []
-    reader = WebdatasetReader(
-        preprocess,
-        args.input_folder,
-        args.batch_size,
-        num_prepro_workers,
-        enable_text=True,
-        enable_image=True,
-        enable_metadata=True,
-    )
-    dataloader = reader.get_loader()
-    for i in dataloader:
-        print(i)
-        break
-if __name__ == '__main__':
-    main()
