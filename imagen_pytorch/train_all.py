@@ -20,7 +20,7 @@ def main():
   parser.add_argument('--input_folder', type=str, default='', help='Input folder')
   parser.add_argument('--batch_size', type=int, default=4, help='batch_size')
   args = parser.parse_args()
-  peinr('num cuda', th.cuda.device_count())
+  print('num cuda', th.cuda.device_count())
   
   options = model_and_diffusion_defaults()
   options['use_fp16'] = False
