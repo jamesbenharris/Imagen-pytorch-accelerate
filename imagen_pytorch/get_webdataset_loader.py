@@ -1,7 +1,13 @@
 from torchvision.transforms import Compose, Resize, CenterCrop, ToTensor, Normalize
 import os
 import argparse
-
+from PIL import Image
+try:
+    from torchvision.transforms import InterpolationMode
+    BICUBIC = InterpolationMode.BICUBIC
+except ImportError:
+    BICUBIC = Image.BICUBIC
+    
 def _transform(n_px):
     return Compose([
         Resize(n_px, interpolation=BICUBIC),
