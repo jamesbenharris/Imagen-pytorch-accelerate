@@ -168,7 +168,7 @@ def main():
     dataloader = reader.get_loader()
     print('dataloader returned')
     for i in dataloader:
-        print(type(i))
+        print(i)
         break
 if __name__ == '__main__':
     main()
