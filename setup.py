@@ -28,7 +28,8 @@ setup(
         "blobfile",
         "accelerate",
 	"transformers",
-	"torchvision"
+	"torchvision",
+	"webdataset"
     ],
     author="",
 )
