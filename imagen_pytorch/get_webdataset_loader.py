@@ -1,4 +1,5 @@
 from torchvision.transforms import Compose, Resize, CenterCrop, ToTensor, Normalize
+from torch.utils.data import DataLoader
 import os
 import argparse
 from PIL import Image
