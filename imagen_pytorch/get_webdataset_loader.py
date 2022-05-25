@@ -35,7 +35,7 @@ def create_webdataset(
     caption_key="txt",
     enable_metadata=False,
     cache_path=None,
-    resolution=64,
+    
 ):
     """Create a WebDataset reader, it can read a webdataset of image, text and json"""
     import webdataset as wds  # pylint: disable=import-outside-toplevel
@@ -69,6 +69,7 @@ def create_webdataset(
 
     filtered_dataset = dataset.select(filter_dataset)
     print('dataset filtered')
+    resolution = 64
     print('resolution is', resolution)
     def preprocess_dataset(item):
         if enable_image:
@@ -135,7 +136,6 @@ class WebdatasetReader:
         enable_metadata=False,
         wds_image_key="jpg",
         wds_caption_key="txt",
-        resolution=64,
         cache_path=None,
         
     ):
@@ -149,7 +149,6 @@ class WebdatasetReader:
             caption_key=wds_caption_key,
             enable_metadata=enable_metadata,
             cache_path=cache_path,
-            resolution=resolution,
         )
         self.dataloader = dataset_to_dataloader(dataset, batch_size, num_prepro_workers, "webdataset")
     def get_loader(self):
