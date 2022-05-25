@@ -27,7 +27,8 @@ setup(
         "numpy",
         "blobfile",
         "accelerate",
-	"transformers"
+	"transformers",
+	"torchvision"
     ],
     author="",
 )
