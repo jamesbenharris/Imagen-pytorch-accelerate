@@ -157,7 +157,7 @@ def main():
     actual_values = []
     reader = WebdatasetReader(
         preprocess,
-        input_folder,
+        args.input_folder,
         batch_size,
         num_prepro_workers,
         enable_text=True,
