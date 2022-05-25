@@ -142,3 +142,5 @@ def main():
     for i in dataloader:
         print(i)
         break
+if __name__ == '__main__':
+    main()
