@@ -80,7 +80,7 @@ class TrainLoop:
         self._load_and_sync_parameters()
         if self.use_fp16:
             self._setup_fp16()
-
+        self.model = self.model.to(self.accelerator.device)
         self.opt = AdamW(self.master_params, lr=self.lr, weight_decay=self.weight_decay)
         self.model, self.opt, self.data = self.accelerator.prepare(self.model, self.opt, self.data)
         if self.resume_step:
