@@ -44,7 +44,7 @@ def main():
   TrainLoop(
         model=model,
         diffusion=diffusion,
-        data=data,
+        data=reader,
         batch_size=args.batch_size,
         microbatch=-1,
         lr=1e-4,
