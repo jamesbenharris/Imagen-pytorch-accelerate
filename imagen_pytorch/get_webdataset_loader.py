@@ -2,6 +2,7 @@ from torchvision.transforms import Compose, Resize, CenterCrop, ToTensor, Normal
 from torch.utils.data import DataLoader
 import os
 import argparse
+import torch
 import io
 import numpy as np
 from PIL import Image
@@ -98,7 +99,7 @@ def create_webdataset(
             text = item[caption_key]
             caption = text.decode("utf-8")
             tokenized_text = tokenizer(caption)
-        return np.transpose(arr, [2, 0, 1]), tokenized_text
+        return torch.from_numpy(np.transpose(arr, [2, 0, 1])), tokenized_text
 
     transformed_dataset = filtered_dataset.map(preprocess_dataset, handler=wds.handlers.warn_and_continue)
     print('dataset transformed')
