@@ -115,7 +115,6 @@ def dataset_to_dataloader(dataset, batch_size, num_prepro_workers, input_format)
     data = wds.WebLoader(
         dataset,
         batch_size=batch_size,
-        shuffle=True,
         num_workers=4,
         pin_memory=True,
     )
