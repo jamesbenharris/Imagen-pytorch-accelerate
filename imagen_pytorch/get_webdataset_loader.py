@@ -102,7 +102,7 @@ def create_webdataset(
 
     transformed_dataset = filtered_dataset.map(preprocess_dataset, handler=wds.handlers.warn_and_continue)
     print('dataset transformed')
-    return transformed_dataset.with_epoch(2000000000)
+    return transformed_dataset#.with_epoch(2000000000)
 
 
 def dataset_to_dataloader(dataset, batch_size, num_prepro_workers, input_format):
@@ -140,7 +140,7 @@ class WebdatasetReader:
         
     ):
         self.batch_size = batch_size
-        dataset = create_webdataset(
+        self.dataset = create_webdataset(
             input_dataset,
             preprocess,
             enable_text=enable_text,
@@ -150,10 +150,10 @@ class WebdatasetReader:
             enable_metadata=enable_metadata,
             cache_path=cache_path,
         )
-        self.dataloader = dataset_to_dataloader(dataset, batch_size, num_prepro_workers, "webdataset").with_epoch(2000000000)
+        self.dataloader = dataset_to_dataloader(self.dataset, batch_size, num_prepro_workers, "webdataset").with_epoch(2000000000)
     def get_loader(self):
-        return self.dataloader
+        return self.dataset.batched(self.batch_size).with_epoch(2000000000)
     def get_iter(self):
-        for batch in self.dataloader:
+        for batch in self.dataset.batched(self.batch_size).with_epoch(2000000000):
             yield batch
 
