@@ -115,8 +115,8 @@ def dataset_to_dataloader(dataset, batch_size, num_prepro_workers, input_format)
     data = wds.WebLoader(
         dataset,
         batch_size=batch_size,
-        shuffle=False,
-        num_workers=14,
+        shuffle=True,
+        num_workers=4,
         pin_memory=True,
     )
     return data
@@ -150,9 +150,9 @@ class WebdatasetReader:
             enable_metadata=enable_metadata,
             cache_path=cache_path,
         )
-        self.dataloader = dataset_to_dataloader(self.dataset, batch_size, num_prepro_workers, "webdataset").with_epoch(2000000000)
+        self.dataloader = dataset_to_dataloader(self.dataset, batch_size, num_prepro_workers, "webdataset")
     def get_loader(self):
-        return self.dataset.batched(self.batch_size).with_epoch(10000)
+        return self.dataset.batched(self.batch_size)
     def get_iter(self):
         for batch in self.dataset.batched(self.batch_size).with_epoch(10000):
             yield batch
