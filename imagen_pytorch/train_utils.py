@@ -252,7 +252,7 @@ class TrainLoop:
     def save(self):
         filename = os.path.join(self.save_dir, f'model_{self.step}.pt')
         state_dict = self.model.state_dict()
-        th.save(state_dict, filename)
+        self.accelerator.save(state_dict, filename)
 
     def _master_params_to_state_dict(self, master_params):
         if self.use_fp16:
