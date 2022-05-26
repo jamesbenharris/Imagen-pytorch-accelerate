@@ -41,7 +41,7 @@ def create_webdataset(
     
 
 
-    dataset = wds.WebDataset(urls)
+    dataset = wds.WebDataset(wds.ResampledShards(urls))
     print('dataset_created')
     tokenizer_t = AutoTokenizer.from_pretrained('t5-3b')
     def tokenizer(text):
