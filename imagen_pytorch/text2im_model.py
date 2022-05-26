@@ -56,7 +56,6 @@ class Text2ImUNet(UNetModel):
 
         return outputs
 
-        return outputs
 
     def del_cache(self):
         self.cache = None
