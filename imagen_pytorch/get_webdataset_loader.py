@@ -113,11 +113,12 @@ def dataset_to_dataloader(dataset, batch_size, num_prepro_workers, input_format)
         batch = list(filter(lambda x: x is not None, batch))
         return default_collate(batch)
 
-    data = wds.WebLoader(
+    data = DataLoader(
         dataset,
         batch_size=batch_size,
         num_workers=4,
         pin_memory=True,
+        shuffle=False
     )
     return data
 
