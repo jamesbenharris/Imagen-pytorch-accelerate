@@ -49,6 +49,7 @@ class TrainLoop:
         self.save_dir = save_dir
         self.model = model
         self.diffusion = diffusion
+        self.data = data
         self.batch_size = batch_size
         self.microbatch = microbatch if microbatch > 0 else batch_size
         self.lr = lr
@@ -82,9 +83,7 @@ class TrainLoop:
             self._setup_fp16()
         self.model = self.model.to(self.accelerator.device)
         self.opt = AdamW(self.master_params, lr=self.lr, weight_decay=self.weight_decay)
-        print('start of accelerate')
-        self.model, self.opt, self.data = self.accelerator.prepare(self.model, self.opt, data.get_loader())
-        print('end of accelerate')
+        self.model, self.opt, self.data = self.accelerator.prepare(self.model, self.opt, self.data.get_loader())
         if self.resume_step:
             self._load_optimizer_state()
             # Model was resumed, either due to a restart or a checkpoint
