@@ -6,7 +6,7 @@ import io
 import numpy as np
 from PIL import Image
 from transformers import AutoTokenizer
-
+import webdataset as wds
 try:
     from torchvision.transforms import InterpolationMode
     BICUBIC = InterpolationMode.BICUBIC
@@ -38,7 +38,7 @@ def create_webdataset(
     
 ):
     """Create a WebDataset reader, it can read a webdataset of image, text and json"""
-    import webdataset as wds  # pylint: disable=import-outside-toplevel
+    
 
 
     dataset = wds.WebDataset(urls)
@@ -112,7 +112,7 @@ def dataset_to_dataloader(dataset, batch_size, num_prepro_workers, input_format)
         batch = list(filter(lambda x: x is not None, batch))
         return default_collate(batch)
 
-    data = DataLoader(
+    data = wds.WebLoader(
         dataset,
         batch_size=batch_size,
         shuffle=False,
@@ -150,7 +150,7 @@ class WebdatasetReader:
             enable_metadata=enable_metadata,
             cache_path=cache_path,
         )
-        self.dataloader = dataset_to_dataloader(dataset, batch_size, num_prepro_workers, "webdataset")
+        self.dataloader = dataset_to_dataloader(dataset, batch_size, num_prepro_workers, "webdataset").with_epoch(2000000000)
     def get_loader(self):
         return self.dataloader
     def __iter__(self):
