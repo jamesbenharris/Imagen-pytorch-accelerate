@@ -102,7 +102,7 @@ def create_webdataset(
 
     transformed_dataset = filtered_dataset.map(preprocess_dataset, handler=wds.handlers.warn_and_continue)
     print('dataset transformed')
-    return transformed_dataset
+    return transformed_dataset.with_epoch(2000000000)
 
 
 def dataset_to_dataloader(dataset, batch_size, num_prepro_workers, input_format):
