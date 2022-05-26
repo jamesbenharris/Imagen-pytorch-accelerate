@@ -152,8 +152,8 @@ class WebdatasetReader:
         )
         self.dataloader = dataset_to_dataloader(self.dataset, batch_size, num_prepro_workers, "webdataset").with_epoch(2000000000)
     def get_loader(self):
-        return self.dataset.batched(self.batch_size).with_epoch(2000000000)
+        return self.dataset.batched(self.batch_size).with_epoch(10000)
     def get_iter(self):
-        for batch in self.dataset.batched(self.batch_size).with_epoch(2000000000):
+        for batch in self.dataset.batched(self.batch_size).with_epoch(10000):
             yield batch
 
