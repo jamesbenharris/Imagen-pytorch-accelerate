@@ -19,6 +19,7 @@ def main():
   parser = argparse.ArgumentParser()
   parser.add_argument('--input_folder', type=str, default='', help='Input folder')
   parser.add_argument('--batch_size', type=int, default=4, help='batch_size')
+  parser.add_argument('--save_interval', type=int, default=200, help='batch_size')
   args = parser.parse_args()
   print('num cuda', th.cuda.device_count())
   
@@ -50,7 +51,7 @@ def main():
         lr=1e-4,
         ema_rate="0.9999",
         log_interval=100,
-        save_interval=10000,
+        save_interval=args.save_interval,
         resume_checkpoint=False,
         use_fp16=False,
         fp16_scale_growth=1e-3,
