@@ -49,7 +49,6 @@ class TrainLoop:
         self.save_dir = save_dir
         self.model = model
         self.diffusion = diffusion
-        self.data = data.get_iter()
         self.batch_size = batch_size
         self.microbatch = microbatch if microbatch > 0 else batch_size
         self.lr = lr
@@ -84,7 +83,7 @@ class TrainLoop:
         self.model = self.model.to(self.accelerator.device)
         self.opt = AdamW(self.master_params, lr=self.lr, weight_decay=self.weight_decay)
         print('start of accelerate')
-        self.model, self.opt, self.data2 = self.accelerator.prepare(self.model, self.opt, data.get_loader())
+        self.model, self.opt, self.data = self.accelerator.prepare(self.model, self.opt, data.get_loader())
         print('end of accelerate')
         if self.resume_step:
             self._load_optimizer_state()
