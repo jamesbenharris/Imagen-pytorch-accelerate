@@ -35,6 +35,8 @@ class Text2ImUNet(UNetModel):
         else:
             super().__init__(*args, **kwargs, encoder_channels=xf_width)
         self.t5 = T5EncoderModel.from_pretrained(t5_name)
+        for param in self.t5.parameters():
+            param.requires_grad = False
         self.t5_proj = nn.Linear(self.t5.shared.embedding_dim, self.model_channels * 4)
         self.to_xf_width = nn.Linear(self.t5.shared.embedding_dim, xf_width)
         self.cache_text_emb = cache_text_emb
