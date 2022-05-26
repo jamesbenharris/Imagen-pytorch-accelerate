@@ -2,12 +2,11 @@ from torchvision.transforms import Compose, Resize, CenterCrop, ToTensor, Normal
 from torch.utils.data import DataLoader
 import os
 import argparse
-import torch
 import io
 import numpy as np
 from PIL import Image
 from transformers import AutoTokenizer
-import webdataset as wds
+
 try:
     from torchvision.transforms import InterpolationMode
     BICUBIC = InterpolationMode.BICUBIC
@@ -39,10 +38,10 @@ def create_webdataset(
     
 ):
     """Create a WebDataset reader, it can read a webdataset of image, text and json"""
-    
+    import webdataset as wds  # pylint: disable=import-outside-toplevel
 
 
-    dataset = wds.WebDataset(urls)#wds.ResampledShards(urls)
+    dataset = wds.WebDataset(urls)
     print('dataset_created')
     tokenizer_t = AutoTokenizer.from_pretrained('t5-3b')
     def tokenizer(text):
@@ -99,11 +98,11 @@ def create_webdataset(
             text = item[caption_key]
             caption = text.decode("utf-8")
             tokenized_text = tokenizer(caption)
-        return torch.from_numpy(np.transpose(arr, [2, 0, 1])), tokenized_text
+        return np.transpose(arr, [2, 0, 1]), tokenized_text
 
     transformed_dataset = filtered_dataset.map(preprocess_dataset, handler=wds.handlers.warn_and_continue)
     print('dataset transformed')
-    return transformed_dataset#.with_epoch(2000000000)
+    return transformed_dataset
 
 
 def dataset_to_dataloader(dataset, batch_size, num_prepro_workers, input_format):
@@ -116,9 +115,9 @@ def dataset_to_dataloader(dataset, batch_size, num_prepro_workers, input_format)
     data = DataLoader(
         dataset,
         batch_size=batch_size,
-        num_workers=4,
+        shuffle=False,
+        num_workers=num_prepro_workers,
         pin_memory=True,
-        shuffle=False
     )
     return data
 
@@ -141,7 +140,7 @@ class WebdatasetReader:
         
     ):
         self.batch_size = batch_size
-        self.dataset = create_webdataset(
+        dataset = create_webdataset(
             input_dataset,
             preprocess,
             enable_text=enable_text,
@@ -151,10 +150,9 @@ class WebdatasetReader:
             enable_metadata=enable_metadata,
             cache_path=cache_path,
         )
-        self.dataloader = dataset_to_dataloader(self.dataset, batch_size, num_prepro_workers, "webdataset")
+        self.dataloader = dataset_to_dataloader(dataset, batch_size, num_prepro_workers, "webdataset")
     def get_loader(self):
-        return self.dataset.batched(self.batch_size)
-    def get_iter(self):
-        for batch in self.dataset.batched(self.batch_size).with_epoch(10000):
+        return self.dataloader
+    def __iter__(self):
+        for batch in self.dataloader:
             yield batch
-
