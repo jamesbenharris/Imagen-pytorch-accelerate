@@ -19,7 +19,7 @@ def main():
   parser = argparse.ArgumentParser()
   parser.add_argument('--input_folder', type=str, default='', help='Input folder')
   parser.add_argument('--checkpoint', type=str, default='', help='checkpoint')
-  parser.add_argument('--path_for_chaeckpoints', type=str, default='', help='path_for_chaeckpoints')
+  parser.add_argument('--save_dir', type=str, default='', help='path_for_chaeckpoints')
   parser.add_argument('--batch_size', type=int, default=4, help='batch_size')
   parser.add_argument('--save_interval', type=int, default=200, help='batch_size')
   args = parser.parse_args()
@@ -29,7 +29,7 @@ def main():
   options['use_fp16'] = False
   options['t5_name'] = 't5-3b'
   model, diffusion = create_model_and_diffusion(**options)
-  model.load_state_dict(load_checkpoint('base', 'cpu'), strict=False)
+  model.load_state_dict(th.load(args.checkpoint), strict=False)
   reader = WebdatasetReader(
         None,
         args.input_folder,
@@ -60,7 +60,7 @@ def main():
         schedule_sampler=schedule_sampler,
         weight_decay=0.01,
         lr_anneal_steps=0,
-        save_dir='/home/cene655/checkpoints',
+        save_dir=args.save_dir,
   ).run_loop()
 if __name__ == '__main__':
     main()
