@@ -1,5 +1,7 @@
 from torchvision.transforms import Compose, Resize, CenterCrop, ToTensor, Normalize
 from torch.utils.data import DataLoader
+import torch
+
 import os
 import argparse
 import io
@@ -46,6 +48,8 @@ def create_webdataset(
     tokenizer_t = AutoTokenizer.from_pretrained('t5-3b')
     def tokenizer(text):
         out_dict = {}
+        if np.random.binomial(1, 0.08):
+            text = ''
         text_encoding = tokenizer_t(
             text,
             max_length=128,
