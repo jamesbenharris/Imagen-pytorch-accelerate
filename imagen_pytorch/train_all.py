@@ -18,6 +18,8 @@ os.environ["CUDA_VISIBLE_DEVICES"] = "0,1,2,3,4,5,6"
 def main():
   parser = argparse.ArgumentParser()
   parser.add_argument('--input_folder', type=str, default='', help='Input folder')
+  parser.add_argument('--checkpoint', type=str, default='', help='checkpoint')
+  parser.add_argument('--path_for_chaeckpoints', type=str, default='', help='path_for_chaeckpoints')
   parser.add_argument('--batch_size', type=int, default=4, help='batch_size')
   parser.add_argument('--save_interval', type=int, default=200, help='batch_size')
   args = parser.parse_args()
