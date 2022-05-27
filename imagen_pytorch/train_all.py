@@ -15,6 +15,13 @@ from imagen_pytorch.train_utils import TrainLoop
 from imagen_pytorch.get_webdataset_loader import WebdatasetReader
 
 os.environ["CUDA_VISIBLE_DEVICES"] = "0,1,2,3,4,5,6"
+def _fix_path(path):
+  d = th.load(path)
+  checkpoint = {}
+  for key in d.keys():
+    checkpoint[key.replace('module.','')] = d[key]
+  return checkpoint
+
 def main():
   parser = argparse.ArgumentParser()
   parser.add_argument('--input_folder', type=str, default='', help='Input folder')
@@ -29,7 +36,7 @@ def main():
   options['use_fp16'] = False
   options['t5_name'] = 't5-3b'
   model, diffusion = create_model_and_diffusion(**options)
-  model.load_state_dict(th.load(args.checkpoint), strict=False)
+  model.load_state_dict(_fix_path(args.checkpoint), strict=False)
   reader = WebdatasetReader(
         None,
         args.input_folder,
