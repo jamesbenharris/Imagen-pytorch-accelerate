@@ -19,7 +19,8 @@ def _fix_path(path):
   d = th.load(path, map_location='cpu')
   checkpoint = {}
   for key in d.keys():
-    checkpoint[key.replace('module.','')] = d[key]
+    if not 't5' in key:
+        checkpoint[key.replace('module.','')] = d[key]
   return checkpoint
 
 def main():
