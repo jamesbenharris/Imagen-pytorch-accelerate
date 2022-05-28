@@ -45,7 +45,7 @@ def create_webdataset(
 
     dataset = wds.WebDataset(wds.ResampledShards(urls))
     print('dataset_created')
-    tokenizer_t = AutoTokenizer.from_pretrained('t5-3b')
+    tokenizer_t = AutoTokenizer.from_pretrained('t5-11b')
     def tokenizer(text):
         out_dict = {}
         if np.random.binomial(1, 0.08):
