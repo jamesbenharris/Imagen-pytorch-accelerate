@@ -32,7 +32,10 @@ class Text2ImUNet(UNetModel):
             super().__init__(*args, **kwargs, encoder_channels=None)
         else:
             super().__init__(*args, **kwargs, encoder_channels=xf_width)
+         
         self.t5 = T5EncoderModel.from_pretrained(t5_name)
+        if t5_name == 't5-11b':
+            self.t5.to(th.float16)
         for param in self.t5.parameters():
             param.requires_grad = False
         self.t5_proj = nn.Linear(self.t5.shared.embedding_dim, self.model_channels * 4)
@@ -49,7 +52,7 @@ class Text2ImUNet(UNetModel):
         #with th.no_grad():
         if self.cache is not None and self.cache_text_emb:
             return self.cache
-        xf_out = self.t5(input_ids=tokens, attention_mask=mask)['last_hidden_state']#.detach()
+        xf_out = self.t5(input_ids=tokens, attention_mask=mask)['last_hidden_state'].float()#.detach()
         xf_proj = self.t5_proj(xf_out[:, -1])
         xf_out2 = self.to_xf_width(xf_out)
         xf_out2 = xf_out2.permute(0, 2, 1)  # NLC -> NCL
