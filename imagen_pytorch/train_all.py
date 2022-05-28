@@ -34,7 +34,7 @@ def main():
   
   options = model_and_diffusion_defaults()
   options['use_fp16'] = False
-  options['t5_name'] = 't5-3b'
+  options['t5_name'] = 't5-11b'
   options['cache_text_emb'] = False
   model, diffusion = create_model_and_diffusion(**options)
   print('start loading')
