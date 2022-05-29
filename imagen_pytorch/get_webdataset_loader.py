@@ -37,6 +37,7 @@ def create_webdataset(
     caption_key="txt",
     enable_metadata=False,
     cache_path=None,
+    t5_name='t5-11b'
     
 ):
     """Create a WebDataset reader, it can read a webdataset of image, text and json"""
@@ -45,7 +46,7 @@ def create_webdataset(
 
     dataset = wds.WebDataset(wds.ResampledShards(urls))
     print('dataset_created')
-    tokenizer_t = AutoTokenizer.from_pretrained('t5-11b')
+    tokenizer_t = AutoTokenizer.from_pretrained(t5_name)
     def tokenizer(text):
         out_dict = {}
         if np.random.binomial(1, 0.08):
@@ -141,6 +142,7 @@ class WebdatasetReader:
         wds_image_key="jpg",
         wds_caption_key="txt",
         cache_path=None,
+        t5_name='t5-11b',
         
     ):
         self.batch_size = batch_size
@@ -153,6 +155,7 @@ class WebdatasetReader:
             caption_key=wds_caption_key,
             enable_metadata=enable_metadata,
             cache_path=cache_path,
+            t5_name=t5_name
         )
         self.dataloader = dataset_to_dataloader(dataset, batch_size, num_prepro_workers, "webdataset")
     def get_loader(self):
