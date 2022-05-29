@@ -30,12 +30,13 @@ def main():
   parser.add_argument('--save_dir', type=str, default='', help='path_for_chaeckpoints')
   parser.add_argument('--batch_size', type=int, default=4, help='batch_size')
   parser.add_argument('--save_interval', type=int, default=200, help='batch_size')
+  parser.add_argument('--model_name', type=str, default='t5-3b', help='batch_size')
   args = parser.parse_args()
   print('num cuda', th.cuda.device_count())
   
   options = model_and_diffusion_defaults()
   options['use_fp16'] = False
-  options['t5_name'] = 't5-11b'
+  options['t5_name'] = args.model_name
   options['cache_text_emb'] = False
   model, diffusion = create_model_and_diffusion(**options)
   print('start loading')
