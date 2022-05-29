@@ -30,7 +30,6 @@ def _transform(n_px):
   
 def create_webdataset(
     urls,
-    image_transform,
     enable_text=True,
     enable_image=True,
     image_key="jpg",
@@ -132,7 +131,6 @@ class WebdatasetReader:
 
     def __init__(
         self,
-        preprocess,
         input_dataset,
         batch_size,
         num_prepro_workers,
@@ -148,7 +146,6 @@ class WebdatasetReader:
         self.batch_size = batch_size
         dataset = create_webdataset(
             input_dataset,
-            preprocess,
             enable_text=enable_text,
             enable_image=enable_image,
             image_key=wds_image_key,
