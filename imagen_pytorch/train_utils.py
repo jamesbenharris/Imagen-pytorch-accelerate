@@ -160,7 +160,9 @@ class TrainLoop:
             self.save()
 
     def run_step(self, batch, cond):
+        self.ddp_model.del_cache()
         self.forward_backward(batch, cond)
+        self.ddp_model.del_cache()
         if self.use_fp16:
             self.optimize_fp16()
         else:
