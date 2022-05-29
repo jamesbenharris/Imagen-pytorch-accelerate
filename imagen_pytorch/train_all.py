@@ -38,6 +38,7 @@ def main():
   options['use_fp16'] = False
   options['t5_name'] = args.model_name
   options['cache_text_emb'] = False
+  options['cache_text_emb'] = True
   model, diffusion = create_model_and_diffusion(**options)
   print('start loading')
   model.load_state_dict(_fix_path(args.checkpoint), strict=False)
