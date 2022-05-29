@@ -7,7 +7,7 @@ import numpy as np
 import torch as th
 from torch.nn.parallel.distributed import DistributedDataParallel as DDP
 from torch.optim import AdamW
-
+import time
 from . import logger
 from .fp16_util import (
     make_master_params,
@@ -143,10 +143,12 @@ class TrainLoop:
         self.model.convert_to_fp16()
 
     def run_loop(self):
+        start_time = time.time()
         for batch, cond in self.data:
             self.run_step(batch, cond)
             if self.step % self.log_interval == 0:
                 logger.dumpkvs()
+                print('seconds =', time.time() - start_time)
             if self.step % self.save_interval == 0:
                 self.save()
                 # Run for a finite amount of time in integration tests.
