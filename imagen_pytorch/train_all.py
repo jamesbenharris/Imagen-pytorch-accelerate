@@ -43,13 +43,13 @@ def main():
   print('start loading')
   model.load_state_dict(_fix_path(args.checkpoint), strict=False)
   reader = WebdatasetReader(
-        None,
         args.input_folder,
         args.batch_size,
         2,
         enable_text=True,
         enable_image=True,
         enable_metadata=True,
+        t5_name=args.model_name
     )
   data = reader.get_loader()
   logger.configure()
