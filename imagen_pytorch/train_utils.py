@@ -154,7 +154,7 @@ class TrainLoop:
             self.run_step(batch, cond)
             if self.step % self.log_interval == 0:
                 print('steps =', self.step)
-                print('loss =,' self.loss / self.log_interval) 
+                print('loss =', self.loss / self.log_interval) 
                 print('seconds =', time.time() - start_time)
                 print('-' * 20)
                 self.loss = 0
