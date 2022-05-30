@@ -156,6 +156,7 @@ class TrainLoop:
                 print('steps =', self.step)
                 print('loss =,' self.loss / self.log_interval) 
                 print('seconds =', time.time() - start_time)
+                print('-' * 20)
                 self.loss = 0
             if self.step % self.save_interval == 0:
                 self.save()
