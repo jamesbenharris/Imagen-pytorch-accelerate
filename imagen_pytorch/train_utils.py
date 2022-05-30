@@ -19,6 +19,7 @@ from .fp16_util import (
 from .nn import update_ema
 from .resample import LossAwareSampler, UniformSampler
 from accelerate import Accelerator
+from transformers import get_cosine_schedule_with_warmup
 # For ImageNet experiments, this was a good default value.
 # We found that the lg_loss_scale quickly climbed to
 # 20-21 within the first ~1K steps of training.
@@ -42,9 +43,11 @@ class TrainLoop:
         save_dir,
         use_fp16=False,
         fp16_scale_growth=1e-3,
-        schedule_sampler=None,
         weight_decay=0.0,
         lr_anneal_steps=0,
+        num_warmup_steps=10000,
+        num_training_steps=25000000
+        
     ):
         self.save_dir = save_dir
         self.model = model
@@ -63,7 +66,7 @@ class TrainLoop:
         self.resume_checkpoint = resume_checkpoint
         self.use_fp16 = use_fp16
         self.fp16_scale_growth = fp16_scale_growth
-        self.schedule_sampler = schedule_sampler or UniformSampler(diffusion)
+        
         self.weight_decay = weight_decay
         self.lr_anneal_steps = lr_anneal_steps
 
@@ -81,9 +84,11 @@ class TrainLoop:
         self._load_and_sync_parameters()
         if self.use_fp16:
             self._setup_fp16()
+            
         self.model = self.model.to(self.accelerator.device)
         self.opt = AdamW(self.master_params, lr=self.lr, weight_decay=self.weight_decay)
-        self.model, self.opt, self.data = self.accelerator.prepare(self.model, self.opt, self.data.get_loader())
+        self.scheduler = get_cosine_schedule_with_warmup(self.opt, num_warmup_steps=num_warmup_steps, num_training_steps=num_training_steps)
+        self.model, self.opt, self.data, self.scheduler = self.accelerator.prepare(self.model, self.opt, self.data.get_loader(), self.scheduler)
         if self.resume_step:
             self._load_optimizer_state()
             # Model was resumed, either due to a restart or a checkpoint
@@ -97,6 +102,7 @@ class TrainLoop:
             ]
         self.use_ddp = False
         self.ddp_model = self.model
+        self.loss = 0
     def _load_and_sync_parameters(self):
         resume_checkpoint = find_resume_checkpoint() or self.resume_checkpoint
 
@@ -147,8 +153,10 @@ class TrainLoop:
         for batch, cond in self.data:
             self.run_step(batch, cond)
             if self.step % self.log_interval == 0:
-                logger.dumpkvs()
+                print('steps =', self.step)
+                print('loss =,' self.loss / self.log_interval) 
                 print('seconds =', time.time() - start_time)
+                self.loss = 0
             if self.step % self.save_interval == 0:
                 self.save()
                 # Run for a finite amount of time in integration tests.
@@ -178,8 +186,7 @@ class TrainLoop:
                 for k, v in cond.items()
             }
             last_batch = (i + self.microbatch) >= batch.shape[0]
-            t, weights = self.schedule_sampler.sample(micro.shape[0], self.accelerator.device)
-
+            
             compute_losses = functools.partial(
                 self.diffusion.training_losses,
                 self.ddp_model,
@@ -188,26 +195,11 @@ class TrainLoop:
                 model_kwargs=micro_cond,
             )
 
-            if last_batch or not self.use_ddp:
-                losses = compute_losses()
-            else:
-                with self.ddp_model.no_sync():
-                    losses = compute_losses()
-
-            if isinstance(self.schedule_sampler, LossAwareSampler):
-                self.schedule_sampler.update_with_local_losses(
-                    t, losses["loss"].detach()
-                )
-
-            loss = (losses["loss"] * weights).mean()
-            log_loss_dict(
-                self.diffusion, t, {k: v * weights for k, v in losses.items()}
-            )
-            if self.use_fp16:
-                loss_scale = 2 ** self.lg_loss_scale
-                (loss * loss_scale).backward()
-            else:
-                self.accelerator.backward(loss)
+            losses = compute_losses()
+            loss = losses["loss"].mean()
+            self.loss += loss 
+            self.accelerator.backward(loss)
+            self.scheduler.step()
 
     def optimize_fp16(self):
         if any(not th.isfinite(p.grad).all() for p in self.model_params):
@@ -227,7 +219,6 @@ class TrainLoop:
 
     def optimize_normal(self):
         self._log_grad_norm()
-        self._anneal_lr()
         self.opt.step()
         for rate, params in zip(self.ema_rate, self.ema_params):
             update_ema(params, self.master_params, rate=rate)
