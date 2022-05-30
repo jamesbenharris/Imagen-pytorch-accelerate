@@ -73,7 +73,7 @@ class TrainLoop:
         self.step = 0
         self.resume_step = 0
         self.global_batch = self.batch_size
-
+        self.schedule_sampler = UniformSampler(diffusion)
         self.model_params = list(self.model.parameters())
         self.master_params = self.model_params
         self.named_master_params = list(self.model.named_parameters())
@@ -187,7 +187,7 @@ class TrainLoop:
                 for k, v in cond.items()
             }
             last_batch = (i + self.microbatch) >= batch.shape[0]
-            
+            t, weights = self.schedule_sampler.sample(micro.shape[0], self.accelerator.device)
             compute_losses = functools.partial(
                 self.diffusion.training_losses,
                 self.ddp_model,
