@@ -14,7 +14,6 @@ from imagen_pytorch.dataset import get_loader
 from imagen_pytorch.train_utils import TrainLoop
 from imagen_pytorch.get_webdataset_loader import WebdatasetReader
 
-os.environ["CUDA_VISIBLE_DEVICES"] = "0,1,2,3,4,5"
 def _fix_path(path):
   d = th.load(path, map_location='cpu')
   checkpoint = {}
